@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
   # When true simulation is not run but only the network properties are given
   # When false simulation is run
-  GET_PROP = False
+  GET_PROP = True
 
   # THIS WAS IN THE ORGINAL CODE (WITHOUT G_SIZE AS ARG)
   # if len(sys.argv)>1:
@@ -236,15 +236,17 @@ if __name__ == "__main__":
 
   e.linkUp("Nduta","Nyarugusu","150.0", forced_redirection=True) #distance needs to be checked.
 
-  if GET_PROP is False:
+  if GET_PROP is True:
 
       # links that are added later in the simulation
       e.linkUp("Bujumbura","Lusenda","53.0") #Only added when the refugee inflow starts at Lusenda, on 30-07-2015
+      e.remove_link("Nduta","Nyarugusu")
       e.linkUp("Nduta","Nyarugusu","150.0") #Re-add link, but without forced redirection
 
       camps = ["Mahama", "Nduta", "Nyarugusu", "Nakivale", "Lusenda"]
       conflicts = ["Bujumbura", "Burambi", "Mwaro", "Bukinanyana", "Cibitoke", "Kabarore", "Gisuru"]
-      properties.get_properties(locations, camps, conflicts)
+      connections = e.export_graph(False)[1]
+      properties.get_properties(locations, camps, conflicts, connections)
 
       print("If you want to run the simulation set 'GET_PROP' to False")
       quit()

@@ -229,7 +229,8 @@ if __name__ == "__main__":
       conflicts = ["Bamako", "Tenenkou", "Lere", "Niafounke", "Timbuktu", "Dire",
                 "Bourem", "Kidal", "Gao", "Douentza", "Ansongo", "Menaka"]
 
-      properties.get_properties(locations, camps, conflicts)
+      connections = e.export_graph(False)[1]
+      properties.get_properties(locations, camps, conflicts, connections)
 
       print("If you want to run the simulation set 'GET_PROP' to False")
       quit()

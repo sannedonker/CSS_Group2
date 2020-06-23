@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
   # When true simulation is not run but only the network properties are given
   # When false simulation is run
-  GET_PROP = False
+  GET_PROP = True
 
   if len(sys.argv)>1:
     if (sys.argv[1]).isnumeric():
@@ -366,7 +366,9 @@ if __name__ == "__main__":
                     "Bangui", "Damara", "Bogangolo", "Sibut", "Bouca",
                     "Batangafo", "Kaga Bandoro", "Dekoa", "Grimari", "Bambari",
                     "Bamingui", "Ndele", "Bria", "Bangassou", "Rafai", "Obo"]
-      properties.get_properties(locations, camps, conflicts)
+
+      connections = e.export_graph(False)[1]
+      properties.get_properties(locations, camps, conflicts, connections)
 
       print("If you want to run the simulation set 'GET_PROP' to False")
       quit()
