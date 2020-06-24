@@ -280,9 +280,10 @@ class Location:
     self.numAgents += 1
 
   def print(self):
-    print("Location name: %s, X: %s, Y: %s, movechance: %s, cap: %s, pop: %s, country: %s, conflict? %s, camp? %s" % (self.name, self.x, self.y, self.movechance, self.capacity, self.pop, self.country, self.conflict, self.camp), file=sys.stderr)
-    for l in self.links:
-      print("Link from %s to %s, dist: %s, pop. %s" % (self.name, l.endpoint.name, l.distance, l.numAgents), file=sys.stderr)
+    pass
+    # print("Location name: %s, X: %s, Y: %s, movechance: %s, cap: %s, pop: %s, country: %s, conflict? %s, camp? %s" % (self.name, self.x, self.y, self.movechance, self.capacity, self.pop, self.country, self.conflict, self.camp), file=sys.stderr)
+    # for l in self.links:
+    #   print("Link from %s to %s, dist: %s, pop. %s" % (self.name, l.endpoint.name, l.distance, l.numAgents), file=sys.stderr)
 
   def SetConflictMoveChance(self):
     """ Modify move chance to the default value set for conflict regions. """
