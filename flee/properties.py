@@ -52,6 +52,9 @@ def get_properties(locations, camps, conflicts, connection):
     """
     Get properties of the networks
     """
+
+    prop_dict = {}
+
     distances = []
     for location in locations:
         links = location.links
@@ -60,9 +63,13 @@ def get_properties(locations, camps, conflicts, connection):
             # print(link.startpoint.name, link.endpoint.name, link.distance)
 
     # print maxium, minimum and average weight of the links
-    print("max dist", max(distances))
-    print("min dist", min(distances))
-    print("av dist", (sum(distances) / 2) / len(distances))
+    # print("max dist", max(distances))
+    # print("min dist", min(distances))
+    # print("av dist", (sum(distances) / 2) / len(distances))
+    prop_dict["max_dist"] = [max(distances)]
+    prop_dict["min_dist"] = [min(distances)]
+    prop_dict["av_dist"] = [(sum(distances) / 2) / len(distances)]
+
 
     # perform Dijkstra algorithm for all camp - conflict combinations
     paths = []
@@ -72,10 +79,11 @@ def get_properties(locations, camps, conflicts, connection):
             paths.append(path)
 
     # print average shortes path length and diameter
-    print("av path", sum(paths) / len(paths))
-    print("diameter", max(paths))
+    # print("av path", sum(paths) / len(paths))
+    # print("diameter", max(paths))
 
-
+    prop_dict["av_path"] = sum(paths) / len(paths)
+    prop_dict["diameter"] = max(paths)
 
     locations2 = []
     for l in locations:
@@ -88,14 +96,26 @@ def get_properties(locations, camps, conflicts, connection):
 
     total_degree = [camp_degree[0], conflict_degree[0], hub_degree[0]]
     avg_degree = [camp_degree[1], conflict_degree[1], hub_degree[1]]
-    print('total degree is {}'.format(len(connection)/2))
-    print('total_degree for camp, conflict, hub = {}'.format(total_degree))
-    print('avg degree for camp, conflict, hub = {}'.format(avg_degree))
+    # print('total degree is {}'.format(len(connection)/2))
+    # print('total_degree for camp, conflict, hub = {}'.format(total_degree))
+    # print('avg degree for camp, conflict, hub = {}'.format(avg_degree))
+
+    prop_dict["tot_degree"] = [len(connection)/2]
+    prop_dict["tot_degree_type"] = total_degree
+    prop_dict["av_degree_type"] = avg_degree
+
 
     list_neighbors = list_of_neighbors(locations2, connection)
-    avg_clus_coef = clus_coef(list_neighbors, connection, locations2, camps, conflicts)[1:]
+    clus_coef_out = clus_coef(list_neighbors, connection, locations2, camps, conflicts)
+    avg_clus_coef = clus_coef_out[1:][:-1]
+    clus_coef_tot = clus_coef_out[-1]
 
-    print('avg clus_coef for camp, conflict, hub = {}'.format(avg_clus_coef))
+    # print('avg clus_coef for camp, conflict, hub = {}'.format(avg_clus_coef))
+
+    prop_dict["clus_coef_type"] = avg_clus_coef
+    prop_dict["clus_coef_tot"] = clus_coef_tot
+
+    return prop_dict
 
 # ============== PANS CODE ============================
 
@@ -196,5 +216,6 @@ def clus_coef(list_neighbors, connection, locations, camp, conflict):
             clus_coef_hub += ind_clus_coef[i]
 
     print("Average clus coef total: ", clus_coef_tot / len(locations))
+    av_clus_tot = clus_coef_tot / len(locations)
 
-    return ind_clus_coef, clus_coef_camp/len(camp), clus_coef_conflict/len(conflict), clus_coef_hub/len(rest)
+    return ind_clus_coef, clus_coef_camp/len(camp), clus_coef_conflict/len(conflict), clus_coef_hub/len(rest), av_clus_tot
