@@ -45,8 +45,8 @@ def modification(graph, leng, delete=True) :
 
 def create_graph(N, E) :
     # Mix it up
-    N = int(np.random.normal(N, 0.2))
-    E = int(np.random.normal(E, 0.2))
+    N = int(np.random.normal(N, 2))
+    E = int(np.random.normal(E, 2))
 
     G = nx.Graph()
     G.add_nodes_from(np.arange(N))
@@ -69,7 +69,7 @@ def create_graph(N, E) :
     # Delete non-edges
 
     b = False
-    for i in range(len(G.nodes)) :
+    for i in range(int(np.random.normal(10, 2))):
         mu = np.random.lognormal(2, 1) + 30
         G = modification(G, mu, delete=False)
 
@@ -163,9 +163,12 @@ class DataRun:
 
 class DataTest:
 
-    def __init__(self, data_list, properties = {}):
+    def __init__(self, data_list, n_camp, nodes, links, proper = {}):
         self.data_list = data_list
-        self.properties = properties
+        self.properties = proper
+        self.n_camp = n_camp
+        self.nodes = nodes
+        self.links = links
 
         self.moment = self.phase_change()
         self.angle = self.slope()
@@ -200,10 +203,10 @@ class DataTest:
 
 ### SETTINGS #####################################
 N = 20  # number of nodes
-E = 30 # number of links
-locations_distribution = [0.50, 0.30, 0.2]  # 45% of locations are hubs, 35% - conflict zones, 20 % camps
-TOTAL_TIME = 50 # days of simulation
-FIXED_CAPACITY = 1_000 # capacity of single camp
+E = 40 # number of links
+locations_distribution = [0.55, 0.25, 0.2]  # 45% of locations are hubs, 35% - conflict zones, 20 % camps
+TOTAL_TIME = 100 # days of simulation
+FIXED_CAPACITY = 2_000 # capacity of single camp
 FIXED_LIMIT = FIXED_CAPACITY * 0.99 # What is full
 t_limit = 10 # Days to release all refugees
 # FRACTION = 1 # How much of limit of refugees do wwe release
@@ -211,66 +214,68 @@ t_limit = 10 # Days to release all refugees
 if __name__ == '__main__':
     all_data = []
 
-    for test in range(5):
+    for test in range(1000):
         print("TEST NUMBER:", test)
         # Create Graph
         G = create_graph(N, E)
         G2 = location_types(graph=G, distr=locations_distribution)
 
-        test_data = []
-        for graph_test in range(1, 21):
-            print("GRAPH TEST:", graph_test)
-            FRACTION = 0.05 * graph_test
+        try:
+            test_data = []
+            for graph_test in range(1, 21):
+                print("GRAPH TEST:", graph_test)
+                FRACTION = 0.05 * graph_test
 
-            # Make model and set flow
-            e, locations, camp_name, camp_locations = make_model(G2)
-            FIX_REFRUGEE_FLOW = flow_for_fraction_release_in_t_limit(camp_name, FIXED_CAPACITY, t_limit, FRACTION )
+                # Make model and set flow
+                e, locations, camp_name, camp_locations = make_model(G2)
+                FIX_REFRUGEE_FLOW = flow_for_fraction_release_in_t_limit(camp_name, FIXED_CAPACITY, t_limit, FRACTION )
 
-            # Determine capacity
-            for nr in camp_locations :
-                locations[nr].capacity = FIXED_CAPACITY
-
-            # reset refs
-            refugee_debt = 0
-            refugees_raw = 0
-
-
-            # Start Simulating
-            data_full = []
-            for t in range(0, TOTAL_TIME) :
-                # Check amount of refugees
-                new = FIX_REFRUGEE_FLOW if t < t_limit else 0
-
-                # Add them
-                e.add_agents_to_conflict_zones(new)
-
-                # Track total amount of refs
-                refugees_raw += new
-
-                # Propagate the model by one time step.
-                e.evolve()
-
-                # Check for full camps
-                full = 0
+                # Determine capacity
                 for nr in camp_locations :
-                    if locations[nr].numAgents > FIXED_LIMIT :
-                        full += 1
+                    locations[nr].capacity = FIXED_CAPACITY
 
-                # Save single data point
-                data_full.append(full)
+                # reset refs
+                refugee_debt = 0
+                refugees_raw = 0
 
-            # Save single simulation
-            test_data.append(DataRun(data_full, FRACTION))
+                # Start Simulating
+                data_full = []
+                for t in range(0, TOTAL_TIME) :
+                    # Check amount of refugees
+                    new = FIX_REFRUGEE_FLOW if t < t_limit else 0
 
-        # Save entire test
-        conflicts = []
-        for conflict in e.conflict_zones :
-            conflicts.append(conflict.name)
+                    # Add them
+                    e.add_agents_to_conflict_zones(new)
 
-        prop = properties.get_properties(locations, camp_name, conflicts, e.export_graph(False)[1])
-        prop['resillience'] = resillience(G2)
+                    # Track total amount of refs
+                    refugees_raw += new
 
-        print('properties:', prop)
-        all_data.append(DataTest(test_data, prop))
+                    # Propagate the model by one time step.
+                    e.evolve()
 
-    pickle.dump(all_data, open('output\\RUN_DATA.p', 'wb'))
+                    # Check for full camps
+                    full = 0
+                    for nr in camp_locations :
+                        if locations[nr].numAgents > FIXED_LIMIT :
+                            full += 1
+
+                    # Save single data point
+                    data_full.append(full)
+
+                # Save single simulation
+                test_data.append(DataRun(data_full, FRACTION))
+
+            # Save entire test
+            conflicts = []
+            for conflict in e.conflict_zones :
+                conflicts.append(conflict.name)
+
+            prop = properties.get_properties(locations, camp_name, conflicts, e.export_graph(False)[1])
+            prop['resillience'] = resillience(G2)
+
+            print('properties:', prop)
+            all_data.append(DataTest(test_data, len(camp_name), len(G2.nodes), len(G2.edges), prop))
+            pickle.dump(all_data, open('output\\RUN_DATA_100_more_random.p', 'wb'))
+        except:
+            pass
+
