@@ -85,27 +85,22 @@ def lst_to_dict(lst) :
     return res_dct
 
 
-def location_types(graph, distr) :
-    dict = {}
+def location_types(G, distr) :
+    dict_style = {}
 
-    degree_dict = lst_to_dict(list(G.degree))
+    camp_per = np.random.normal(0.3, 0.1)
+    con_per = np.random.normal(0.3, 0.1)
 
-    sorted_degree_dict = sorted(degree_dict.items(), key=itemgetter(1), reverse=True)
+    for d, n in zip(list(G.degree), list(G.nodes)):
 
-    L = len(sorted_degree_dict)
+        if d == 1 or np.random.random() < camp_per:
+            dict_style[n] = 'camp'
+        elif np.random.random() < con_per:
+            dict_style[n] = "conflict"
+        else:
+            dict_style[n] = "default"
 
-    for i in range(L) :
-
-        if i in np.arange(0, round(L * distr[0]), 1) :
-            dict[sorted_degree_dict[i][0]] = "default"
-
-        if i in np.arange(round(L * distr[0]), round(L * distr[0]) + round(L * distr[1]), 1) :
-            dict[sorted_degree_dict[i][0]] = "conflict"
-
-        if i in np.arange(round(L * distr[0]) + round(L * distr[1]), L, 1) :
-            dict[sorted_degree_dict[i][0]] = "camp"
-
-    nx.set_node_attributes(G, dict, "Location_type")
+    nx.set_node_attributes(G, dict_style, "Location_type")
 
     return G
 
@@ -163,12 +158,9 @@ class DataRun:
 
 class DataTest:
 
-    def __init__(self, data_list, n_camp, nodes, links, proper = {}):
+    def __init__(self, data_list, proper = {}):
         self.data_list = data_list
         self.properties = proper
-        self.n_camp = n_camp
-        self.nodes = nodes
-        self.links = links
 
         self.moment = self.phase_change()
         self.angle = self.slope()
@@ -218,7 +210,7 @@ if __name__ == '__main__':
         print("TEST NUMBER:", test)
         # Create Graph
         G = create_graph(N, E)
-        G2 = location_types(graph=G, distr=locations_distribution)
+        G2 = location_types(G=G, distr=locations_distribution)
 
         try:
             test_data = []
@@ -272,10 +264,13 @@ if __name__ == '__main__':
 
             prop = properties.get_properties(locations, camp_name, conflicts, e.export_graph(False)[1])
             prop['resillience'] = resillience(G2)
+            prop['n_camps'] =  len(camp_name)
+            prop['n_nodes'] = len(G2.nodes)
+            prop['n_links'] = len(G2.edges)
 
             print('properties:', prop)
-            all_data.append(DataTest(test_data, len(camp_name), len(G2.nodes), len(G2.edges), prop))
-            pickle.dump(all_data, open('output\\RUN_DATA_100_more_random.p', 'wb'))
-        except:
-            pass
+            all_data.append(DataTest(test_data, prop))
+            pickle.dump(all_data, open('output\\RUN_DATA_most_random.p', 'wb'))
+        except Exception as e:
+            print(e)
 
