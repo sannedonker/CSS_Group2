@@ -57,6 +57,17 @@ def make_plots(data):
                 plt.ylabel('FRACTION')
                 fig.savefig(folder + 'full' + key + str(i) + '.png')
 
+
+def phase_plot_final(data):
+    fig = plt.figure(figsize=(8, 8))
+    for i in data[2].data_list :
+        plt.scatter(i.fraction, i.time)
+
+    plt.ylabel('Normalized total run time', fontsize=18)
+    plt.xlabel('Fraction of capacity', fontsize=18)
+    plt.title('Phase plot', fontsize=20)
+    fig.savefig('phase_final.png')
+
 if __name__ == '__main__':
     data = pickle.load(open('output\\RUN_DATA_most_random.p', 'rb'))
     df = make_df(data)
@@ -67,6 +78,7 @@ if __name__ == '__main__':
     sn.heatmap(corr_matrix, annot=True)
 
     make_plots(data)
+    phase_plot_final(data)
 
     plt.show()
 
