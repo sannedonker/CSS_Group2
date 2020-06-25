@@ -271,6 +271,7 @@ if __name__ == '__main__':
             print('properties:', prop)
             all_data.append(DataTest(test_data, prop))
             pickle.dump(all_data, open('output\\RUN_DATA_most_random.p', 'wb'))
+
         except Exception as e:
             print(e)
 
