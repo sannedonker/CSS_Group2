@@ -206,7 +206,7 @@ t_limit = 10 # Days to release all refugees
 if __name__ == '__main__':
     all_data = []
 
-    for test in range(1000):
+    for test in range(10):
         print("TEST NUMBER:", test)
         # Create Graph
         G = create_graph(N, E)

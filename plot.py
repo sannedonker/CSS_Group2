@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import pickle
-from Experiment1 import DataTest, DataRun
+from experiment import DataTest, DataRun
 import pandas as pd
 import seaborn as sn
 
@@ -80,6 +80,6 @@ if __name__ == '__main__':
     make_plots(data)
     phase_plot_final(data)
 
-    plt.show()
+    #plt.show()
 
 
