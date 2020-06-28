@@ -88,8 +88,8 @@ def lst_to_dict(lst) :
 def location_types(G, distr) :
     dict_style = {}
 
-    camp_per = np.random.normal(0.3, 0.1)
-    con_per = np.random.normal(0.3, 0.1)
+    camp_per = np.random.normal(distr[0], 0.1)
+    con_per = np.random.normal(distr[1], 0.1)
 
     for d, n in zip(list(G.degree), list(G.nodes)):
 
@@ -194,19 +194,25 @@ class DataTest:
 
 
 ### SETTINGS #####################################
+# Network variables
 N = 20  # number of nodes
 E = 40 # number of links
-locations_distribution = [0.55, 0.25, 0.2]  # 45% of locations are hubs, 35% - conflict zones, 20 % camps
+locations_distribution = [0.30, 0.30, 0.40]  # 30% - conflict zones, 30 % camps, 40% of locations are hubs
+
+# Simulation variables
 TOTAL_TIME = 100 # days of simulation
 FIXED_CAPACITY = 2_000 # capacity of single camp
 FIXED_LIMIT = FIXED_CAPACITY * 0.99 # What is full
 t_limit = 10 # Days to release all refugees
 # FRACTION = 1 # How much of limit of refugees do wwe release
 
+# Experiment variables
+NUMBER_OF_SAMPLES = 200
+
 if __name__ == '__main__':
     all_data = []
 
-    for test in range(10):
+    for test in range(NUMBER_OF_SAMPLES):
         print("TEST NUMBER:", test)
         # Create Graph
         G = create_graph(N, E)

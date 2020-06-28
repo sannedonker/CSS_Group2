@@ -12,3 +12,20 @@ Note for MALI dataset: for running  fleeGroups.py, fleeGroupsSpeed.py files comm
 #### Answer the RQ
 To answer the research question random planar graphs are generated and it's properties are analysed. When experiment.py is run 10 random graphs are simulated, the analysis of these graphs is visible when plot.py is run. All plots are saved in the 'figures' folder. Interesting figures are: n_camps.png, tot_degree_type0, tot_degree_type1, smallcorr2, phase and phase2.
 The validation plot of the graphs and their properties is made in the jupyter file plot_function. There the validation is made of the data used in the project.
+
+
+### How to run ####
+
+First Install all packages by executing the following command:
+pip install -r requirements.txt
+
+Then Run experiment.py to create the pickle that we need later to plot the results
+(You maybe want to edit the NUMBER_OF_SAMPLES, but the simulation can be stopped at any time since data is saved every round):
+python experiment.py
+
+Finally you run plot.py to use the pickle and plot the data:
+python plot.py
+
+
+####  Bonus ######
+ tree.py has an example of a tree validator
