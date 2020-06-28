@@ -1,15 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 24 18:34:36 2020
-
-@author: GeoComputers
-"""
-
 import random
 import numpy as np
 import sys
 import copy
-# from multiprocessing import Process,Pool
 from flee.SimulationSettings import SimulationSettings
 from flee.Diagnostics import write_agents
 
@@ -931,9 +923,6 @@ class Ecosystem :
         assert self.conflict_pop > 0
 
         return np.random.choice(self.conflict_zones, number, p=self.conflict_weights / self.conflict_pop)
-    
-##############################################################################################################################################
-
 
 
     def refresh_conflict_weights(self) :
@@ -1114,8 +1103,6 @@ class Ecosystem :
             
                 all_group_cls = [group for group in self.agents if group.location==clcl]
                 
-                #new_group=random.sample(all_group_loc,5)
-#                print(new_group)
                 
                 new_group = []
                 x = random.choice([2,3,4])
@@ -1124,11 +1111,10 @@ class Ecosystem :
                     new_group.append(random.choice(all_group_cls)) # random sample doesnot work:)
                     
                 sizes_of_new_group = [group.size for group in new_group]
-                #speeds_of_member_groups= [group.move_speed for group in new_group]
+
                 
                 total_size_of_new_group = sum(sizes_of_new_group)
-                #new_speed=min(speeds_of_member_groups)
-                
+
                 if total_size_of_new_group>600:
                     continue
                      
@@ -1136,10 +1122,9 @@ class Ecosystem :
                 [new_group[0].location.DecrementNumAgents() for i in range(total_size_of_new_group)]                
                 
                
-                #self.agents.append(Group(clcl, total_size_of_new_group))
-                self.addAgent(clcl, total_size_of_new_group)
+
+               self.addAgent(clcl, total_size_of_new_group)
                 
-                #self.addAgent_speed(clcl, total_size_of_new_group,new_speed)
         
         return cl, group_sizes
     
@@ -1153,9 +1138,13 @@ class Ecosystem :
             for l in self.locations :
                 l.updateRegionScore()
                 
+            '''
+            Divide groups into to two at 5% of all locations, at each time step
+            '''
+                
             locs=[gr.location for gr in self.agents if not isinstance(gr.location, Link )]
             sample_locs=random.sample(list(locs),int(len(locs)*0.005))
-            #print("len temp_cl",len(temp_cl))
+
             
             for loc in sample_locs:
                 
@@ -1172,11 +1161,11 @@ class Ecosystem :
                     
 
                          
-                    # remove old groups from the location and add one 
+                    # remove old group from the location and two new ones
+                    
                     [old_group.location.DecrementNumAgents() for i in range(size_of_old_group)]                
                     
                    
-                    #self.agents.append(Group(clcl, total_size_of_new_group))
                     self.addAgent(old_group.location, new_size1)
                     self.addAgent(old_group.location, new_size2)
     
